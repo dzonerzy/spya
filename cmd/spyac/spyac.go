@@ -41,7 +41,7 @@ func main() {
 	}
 	strm.SetCallback(callback)
 	strm.Start()
-	fmt.Println("Press Enter to recording...")
+	fmt.Println("Press Enter to stop recording...")
 	fmt.Scanln()
 	strm.Close()
 }
