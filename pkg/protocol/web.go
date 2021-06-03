@@ -8,7 +8,7 @@ import (
 	"net"
 	"net/http"
 
-	"github.com/dzonerzy/spyac/pkg/ssl"
+	"github.com/dzonerzy/spya/pkg/ssl"
 )
 
 // Webserver define a Webserver

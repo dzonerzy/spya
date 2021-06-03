@@ -7,7 +7,7 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/dzonerzy/spyac/pkg/audio"
+	"github.com/dzonerzy/spya/pkg/audio"
 	"github.com/gorilla/mux"
 	"github.com/gorilla/websocket"
 )

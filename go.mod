@@ -1,4 +1,4 @@
-module github.com/dzonerzy/spyac
+module github.com/dzonerzy/spya
 
 go 1.16
 

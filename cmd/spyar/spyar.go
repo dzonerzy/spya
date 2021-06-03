@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/dzonerzy/spyac/pkg/audio"
-	"github.com/dzonerzy/spyac/pkg/protocol"
+	"github.com/dzonerzy/spya/pkg/audio"
+	"github.com/dzonerzy/spya/pkg/protocol"
 )
 
 var (

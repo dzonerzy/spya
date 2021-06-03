@@ -3,7 +3,7 @@ package main
 import (
 	"log"
 
-	"github.com/dzonerzy/spyac/pkg/protocol"
+	"github.com/dzonerzy/spya/pkg/protocol"
 )
 
 func main() {
