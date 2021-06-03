@@ -47,6 +47,7 @@ func (as *AudioServer) sendHandler(rw http.ResponseWriter, r *http.Request) {
 			if err != nil {
 				log.Printf("Error while reading from websocket: %v\n", err)
 				as.clients[secret] = nil
+				delete(as.clients, secret)
 				return
 			}
 			m.Unserialize(message)
