@@ -3,7 +3,6 @@ package protocol
 import (
 	"bytes"
 	"encoding/binary"
-	"fmt"
 
 	"github.com/zhuangsirui/binpacker"
 )
@@ -20,15 +19,19 @@ func (m *Message) Serialize() []byte {
 	return buffer.Bytes()
 }
 
+func (m *Message) FromData(data []byte, samples int) {
+	m.Data = data
+	m.Samples = int32(samples)
+}
+
 func (m *Message) Unserialize(data []byte) {
 	packer := binpacker.NewUnpacker(binary.LittleEndian, bytes.NewReader(data))
 	packer.FetchInt32(&m.Samples)
-	fmt.Println(m.Samples)
+	packer.FetchBytes(uint64(m.Samples), &m.Data)
 }
 
 func NewMessage(data []byte) *Message {
-	return &Message{
-		Samples: int32(len(data)),
-		Data:    data,
-	}
+	var m = new(Message)
+	m.FromData(data, len(data))
+	return m
 }

@@ -39,15 +39,15 @@ func (as *AudioStream) Start() {
 	as.device.Start()
 }
 
-func (as *AudioStream) Close() (err error) {
-	err = as.device.Stop()
-	if err != nil {
-		return
-	}
+func (as *AudioStream) Stop() {
+	as.device.Stop()
+}
+
+func (as *AudioStream) Close() {
+	as.Stop()
 	as.device.Uninit()
 	_ = as.ctx.Uninit()
 	as.ctx.Free()
-	return
 }
 
 func NewAudioStream(devicetype DeviceType, channels int, sampleRate int) (as *AudioStream, err error) {
