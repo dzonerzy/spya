@@ -83,8 +83,11 @@ func NewAudioClient(addr string, port int, ctype ConnectionType, secret string) 
 		ac.addr = fmt.Sprintf("ws://%s:%d/recv", addr, port)
 		ac.conn, r, err = ac.dialer.Dial(ac.addr, ac.header)
 	}
-	if r.StatusCode == http.StatusNotFound {
-		err = fmt.Errorf("client key invalid or not found")
+	if err == nil {
+		if r.StatusCode == http.StatusNotFound {
+			err = fmt.Errorf("client key invalid or not found")
+			ac = nil
+		}
 	}
 	if err != nil {
 		ac = nil
