@@ -4,6 +4,7 @@ import (
 	"flag"
 	"log"
 
+	"github.com/dzonerzy/spya/pkg/network"
 	"github.com/dzonerzy/spya/pkg/protocol"
 )
 
@@ -15,11 +16,13 @@ var (
 func main() {
 	flag.Parse()
 	log.Printf("Starting server on [%s:%d]\n", *ip, *port)
-	server, err := protocol.NewAudioServer(*ip, *port)
+	server := protocol.NewWebsocketServer()
+	//server := protocol.NewUDPServer("SPYA")
+	err := network.StartServer(server, *ip, *port, nil)
 	if err != nil {
-		log.Fatal(err)
+		log.Printf("Error: %v", err)
 	}
-	err = server.Start()
+	log.Println("Server stopped")
 	if err != nil {
 		log.Fatal(err)
 	}

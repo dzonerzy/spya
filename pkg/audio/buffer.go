@@ -31,9 +31,10 @@ func (ab *AudioBuffer) WriteSamples(data []byte, samples int) {
 		atomic.AddInt32(&ab.storedsamples, int32(samples))
 		//ab.storedsamples += samples
 	} else {
-		atomic.StoreInt32(&ab.storedsamples, int32(samples))
-		//ab.storedsamples = samples
+		d := ab.buf.Bytes()
+		d = d[samples:]
 		ab.buf.Reset()
+		ab.buf.Write(d)
 		ab.buf.Write(data)
 	}
 }
@@ -45,7 +46,8 @@ func (ab *AudioBuffer) ReadSamples(samples int) []byte {
 		if int(stored) >= samples {
 			ab.m.RLock()
 			defer ab.m.RUnlock()
-			ab.buf.Read(out)
+			n, _ := ab.buf.Read(out)
+			atomic.StoreInt32(&ab.storedsamples, ab.storedsamples-int32(n))
 			return out
 		}
 	}

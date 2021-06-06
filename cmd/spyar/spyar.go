@@ -6,44 +6,39 @@ import (
 	"log"
 
 	"github.com/dzonerzy/spya/pkg/audio"
+	"github.com/dzonerzy/spya/pkg/network"
 	"github.com/dzonerzy/spya/pkg/protocol"
 )
 
 var (
-	m          *protocol.Message
-	clientrecv *protocol.AudioClient
+	clientrecv network.ClientImpl
+	clientreq  = make(chan network.ClientRequest)
+	clientresp = make(chan network.ClientResponse)
 	ip         = flag.String("ip", "127.0.0.1", "Remote server address")
 	port       = flag.Int("port", 8080, "Remote server port")
 	secret     = flag.String("key", "secret-key", "Client secret key")
 )
 
 func callback(out, in []byte, samples int, samplesize int) {
-	data, err := clientrecv.Recv(samples)
-	if err != nil {
-		log.Printf("Trying to reconnect...")
-		clientrecv.Reconnect()
-	}
-	m.Unserialize(data)
-	copy(out, m.Data)
+	clientreq <- network.ClientRequest{Samples: samples}
+	copy(out, <-clientresp)
 }
 
 func main() {
 	flag.Parse()
 	var err error
 	log.Printf("Connecting to [%s:%d]\n", *ip, *port)
-	clientrecv, err = protocol.NewAudioClient(*ip, *port, protocol.TypeReceive, *secret)
-	if err != nil {
-		log.Fatalf("Unable to connect: %v\n", err)
-	}
-	log.Printf("Connected")
-	m = protocol.NewMessage(nil)
+	clientrecv = protocol.NewWebsocketClient(*secret)
+	//clientrecv = protocol.NewUDPClient(*secret, "SPYA")
+	go network.InitClient(clientrecv, network.ClientReceive, *ip, *port, nil, clientreq, clientresp)
 	strm, err := audio.NewAudioStream(audio.Playback, 1, 44100)
 	if err != nil {
 		log.Fatalf("Unable to create audio stream: %v\n", err)
 	}
 	strm.SetCallback(callback)
 	strm.Start()
-	fmt.Println("Press Enter to receiving audio...")
+	fmt.Println("Press Enter to stop receiving audio...")
 	fmt.Scanln()
 	strm.Close()
+	clientrecv.Disconnect()
 }
